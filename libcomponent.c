@@ -1,7 +1,5 @@
 #include "libcomponent.h"
-#include <stdlib.h>
 
-#include <stdio.h>
 int e_resistance(float orig_resistance, float *res_array)
 {
 	int N = 13;
@@ -37,11 +35,6 @@ int e_resistance(float orig_resistance, float *res_array)
 	res_array[0] = R[0];	
 	res_array[1] = R[1];	
 	res_array[2] = R[2];	
-
-	printf("%.f\n",R[0]);
-	printf("%.f\n",R[1]);
-	printf("%.f\n",R[2]);
-
 
 	return c;
 }
