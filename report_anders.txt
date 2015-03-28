@@ -27,11 +27,11 @@ funktionen ska klara av att hitta en erästtningsresistans av utan något
 fel och värden utanför som funktionen inte väntas klara av.
 
 Testprogrammet kompilerade jag genom att använda följande kommando:
-	gcc -Wall -o componenttest componenttest.c -lcomponent
-* -Wall: aktiverar alla warningar som gcc kan ge.
-* -o: namn på binär som gcc kompilerar.
-* -l: namn på bibliotek att länka (exklusive prefix lib och 
-      filändelse .so).
+    gcc -Wall -o componenttest componenttest.c -lcomponent
+Förklaring av växlar som används:
+    -Wall: sätter på alla varningar i gcc.
+    -o: namn på binär som gcc kompilerar.
+    -l: anger vilka bibiolek som ska användas i länkningen.
 
 Algoritmen som funktionen e_resistance använder för att finna 
 ersättningsresistansen utgår från en fullständig uppräkning av alla 
@@ -43,42 +43,59 @@ hittills funnet. Dessutom sparas den resistanskombination som
 producerade felvärdet genom tre indexsiffror från E12-serien. Om 
 felvärde 0 erhålls då avbryts sökandet och funktionen returnerar.
 
+
+
+
+
+
+
+
+
+
+
+
 Del 2
-I make-filen har jag skapat ett mål med samma namn som .o-filerna biblioteken 
-skapar vid kompilering. Dessa mål har respektive biblioteks .c- och .h-fil i listan 
-som förutsättningar. 
+I make-filen har vi skapat ett mål med samma namn som .o-filerna 
+biblioteken skapar vid kompilering. Dessa mål har respektive biblioteks 
+.c- och .h-fil i listan som förutsättningar. 
 Receptet som körs för dessa mål är följande: 
-    gcc -c -fPIC <biblioteksnamn>.c.
--c
--fPIC
+    gcc -c -fPIC <biblioteksnamn>.c
+Förklaring av växlar som används:
+    -c: kompilerar bara, länkar inte.
+    -fPIC: gör biblioteket oberoende av absoluta minnesplatser.
 
-För varje bibliotek har jag även skapat varsitt mål med samma namn som .so-filerna 
-biblioteken skapar när .o-filerna länkas till delade bibliotek. Dessa mål har 
-respektive biblioteks .o-fil som förutsättning. Receptet som körs för dessa mål är 
-följande: 
+För varje bibliotek har vi även skapat varsitt mål med samma namn som 
+.so-filerna, (biblioteken skapar när .o-filerna länkas till delade 
+bibliotek). Dessa mål har respektive biblioteks .o-fil som förutsättning.
+Receptet som körs för dessa mål är följande: 
     gcc -shared -fPIC -o <biblioteksnamn>.so <biblioteksnamn>.o
--shared
--o
+Förklaring av växlar som används:
+    -shared: skapar ett länkbart objekt.
+    -fPIC: gör biblioteket oberoende av absoluta minnesplatser.
+    -o: anger namn på biblioteksfilen.
 
-Huvudprogrammet kompileras till en .o-fil i ett eget mål med main.c och main.h som 
-förutsättningar. I ett annat mål 'electrotest' länkas huvudprogrammet med biblioteken 
-och skapar en exekverbar fil. Detta mål
+Huvudprogrammet kompileras till en .o-fil i ett eget mål med main.c och 
+main.h som förutsättningar. I ett annat mål 'electrotest' länkas 
+huvudprogrammet med biblioteken och skapar en exekverbar fil. Detta mål 
 kör följande recept:
     gcc -L./lib -Wall -o electrotest main.o -lresistance -lpower -lcomponent
-Flaggan -L anger var kompilatorn ska leta efter biblioteken, i detta fall under 
-lib-mappen i den mapp som kommandot körs från.
--Wall
--l
+Förklaring av växlar som används:
+    -L: anger var kompilatorn ska leta efter biblioteken.
+    -Wall: sätter på alla varningar i gcc.
+    -o: anger namn på programmet.
+    -l: anger vilka bibiolek som ska användas i länkningen.
 
-Ytterligare två mål finns som knyter ihop kompileringen och länkningen av huvudprogram 
-och bibliotek. Målet 'lib' har inget recept (dummy) men anropar .so-målen för bibioteken 
-om .so-filerna har förändrats. Målet 'all' har 'lib' och 'electrotest' som förutsättningar 
-och receptet kopierar bibliotekens .so-filer till mappen lib.
+Ytterligare två mål finns som knyter ihop kompileringen och länkningen 
+av huvudprogram och bibliotek. Målet 'lib' har inget recept (dummy) men 
+anropar .so-målen för bibioteken om .so-filerna har förändrats. Målet 'all' 
+har 'lib' och 'electrotest' som förutsättningar och receptet kopierar 
+bibliotekens .so-filer till mappen lib.
 
-I målet 'install' kopieras bibliotekens .so-filer till /usr/lib och huvyudprogrammet till 
-/usr/bin. I huvudprogrammet (main.c) inkluderar jag header-filerna för varje bibliotek med 
-varsitt inkluderingsdirektiv. Funktionerna i respektive bibliotek används i huvudprogrammet 
-genom att anropa korrekt funktionssignatur.
+I målet 'install' kopieras bibliotekens .so-filer till /usr/lib och 
+huvudprogrammet till /usr/bin. I huvudprogrammet (main.c) inkluderar vi 
+header-filerna för varje bibliotek med varsitt inkluderingsdirektiv. 
+Funktionerna i respektive bibliotek används i huvudprogrammet genom att 
+anropa korrekt funktionssignatur.
 
 Jag sammarbetade med Tobias Lindberg och Ludvig Klingspor.
 
@@ -91,6 +108,8 @@ vad man får pusha till repot tror jag. Kanske behövs enhetstester
 köras lokalt innan, kanske behövs någon form av kodstilskontroll typ 
 checkstyle, kanske behövs kodgranskning typ gerrit. För att garantera 
 att koden inte är felaktig kanske man behöver regresionstestning typ 
-jenkins som körs kontinuerligt.  
+jenkins som körs kontinuerligt. Det behövs nog också dedikerade
+byggservrar för att inte det ska ta för många minuter att bygga,
+om kodmassan är stor. 
 
 
