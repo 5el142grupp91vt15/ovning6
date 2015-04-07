@@ -1,20 +1,18 @@
-all: lib electrotest
+all: lib main.o
 	rm -rf ./lib/
 	mkdir ./lib/
 	cp -t ./lib/ libresistance.so libpower.so libcomponent.so
-	
-electrotest: main.o
-	gcc -L./lib -Wall -o electrotest main.o -lresistance -lpower -lcomponent
-
-main.o: main.c main.h
-	gcc -c main.c
+	gcc -Wl,-rpath=./lib -o electrotest main.o -lresistance -lpower -lcomponent
 
 lib: libresistance.so libpower.so libcomponent.so
- 
 
 install:
 	cp -f electrotest /usr/bin/
 	cp -f -t /usr/lib/ libresistance.so libpower.so libcomponent.so 
+	gcc -o electrotest main.o -lresistance -lpower -lcomponent
+
+main.o: main.c
+	gcc -c main.c
 
 libresistance.o: libresistance.c libresistance.h
 	gcc -c -fPIC libresistance.c
