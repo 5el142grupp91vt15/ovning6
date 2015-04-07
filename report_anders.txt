@@ -1,7 +1,7 @@
 Övning 6: Bibliotek
 Linux som utvecklingsmiljö, VT15
 Anders Axelsson, 1986-04-08-6234
-2015-03-29
+2015-04-07
 
 Del 1
 Jag implementerade biblioteket component (libcomponent.c). Biblioteket 
